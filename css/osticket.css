@@ -85,3 +85,10 @@ input.dp {
 .delete-draft:hover {
     background-color: #fc9f41 !important;
 }
+
+/* --------------------------Imaginea Starts---------------------------------*/
+.client-help-topic-class
+{
+    display: none;
+}
+/* --------------------------Imaginea Ends---------------------------------*/

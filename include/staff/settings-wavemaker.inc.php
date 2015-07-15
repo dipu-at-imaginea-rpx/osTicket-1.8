@@ -70,11 +70,19 @@ $current_team_logos = json_decode($ost->getConfig()->getTeamLogo(), true);
                     <input type="hidden" name="team_ids[]" value="<?php echo $row['team_id'];?>">
                 </td>
                 <td>
-                    <select name="team_logo_ids[]" id="team_logo_id_<?php echo $row['team_id'];?>" class="select-team-logo">
+                    <select class="team_logo_ids" name="team_logo_ids[]" id="team_logo_id_<?php echo $row['team_id'];?>" class="select-team-logo">
                         <option value="0">Select Logo</option>
                         <?php echo $option_logos;?>
                     </select>
-                    <img src="" id="team_logo_<?php echo $row['team_id'];?>">
+                    <?php 
+                        $team_logo_obj = ($current_team_logos[$row['team_id']]) ? AttachmentFile::lookup($current_team_logos[$row['team_id']]) : null;
+                        $team_logo_src = '';
+                        if (null != $team_logo_obj) 
+                        {
+                            $team_logo_src = $team_logo_obj->getDownloadUrl();
+                        }
+                    ?>
+                    <img src="<?php echo $team_logo_src;?>" id="team_logo_<?php echo $row['team_id'];?>">
                     <input type="hidden" name="selected_team_logo_ids[]" value="<?php echo isset($current_team_logos[$row['team_id']])?$current_team_logos[$row['team_id']]:0;?>" id="selected_team_logo_id_<?php echo $row['team_id'];?>">
                 </td>
             </tr>   
@@ -141,10 +149,7 @@ $current_team_logos = json_decode($ost->getConfig()->getTeamLogo(), true);
                         echo 'checked="checked"'; ?>/>
             </td><td>
                 <img src="<?php echo $logo->getDownloadUrl(); ?>"
-                    alt="Custom Logo" valign="middle"
-                    style="box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
-                        margin: 0.5em; height: 5em;
-                        vertical-align: middle;"/>
+                    alt="Custom Logo" valign="middle"/>
                 <?php echo $logo->getName(); ?>
                 <?php if ($logo->getId() != $current_premium_user_logo and $logo->getId() != $current and $logo->getId() != $currentScp and !in_array($logo->getId(), $current_team_logos)) { ?>
                     <label>
@@ -225,6 +230,18 @@ $( document ).ready(function() {
         // console.log(jQuery(selected_team_logo_ids[i]).attr('id').split('_').pop());
         jQuery('#team_logo_id_'+jQuery(selected_team_logo_ids[i]).attr('id').split('_').pop()).val(jQuery(selected_team_logo_ids[i]).val());
     };
+
+    jQuery(".team_logo_ids").change(function() {
+        var team_id = jQuery(this).attr('id').split('_').pop();
+        jQuery.ajax( "ajax.php/config/"+jQuery(this).val()+"/getdownloadurl" )
+        .done(function(response) {
+            jQuery('#team_logo_'+team_id).attr('src', response.file_url);
+        }).fail(function() {
+            alert("Sorry some error happened");
+        }).always(function() {
+            
+        });
+    });
 
 });
 </script>

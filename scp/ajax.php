@@ -49,7 +49,8 @@ $dispatcher = patterns('',
     )),
     url('^/config/', patterns('ajax.config.php:ConfigAjaxAPI',
         url_get('^scp', 'scp'),
-        url_get('^links', 'templateLinks')
+        url_get('^links', 'templateLinks'),
+        url_get('^(?P<id>\d+)/getdownloadurl$', 'getDownloadURL')//Imaginea Added this entry
     )),
     url('^/form/', patterns('ajax.forms.php:DynamicFormsAjaxAPI',
         url_get('^help-topic/(?P<id>\d+)$', 'getFormsForHelpTopic'),

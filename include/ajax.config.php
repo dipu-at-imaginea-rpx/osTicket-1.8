@@ -83,5 +83,13 @@ class ConfigAjaxAPI extends AjaxController {
 
         return $links;
     }
+    //---------------------Imaginea Starts--------------------
+    function getDownloadURL($id) 
+    {
+        $result = array('file_url'=>AttachmentFile::lookup($id)->getDownloadUrl());
+        header('Content-Type: application/json; charset=UTF-8');
+        return $this->json_encode($result);        
+    }
+    //---------------------Imaginea Ends----------------------
 }
 ?>

@@ -29,7 +29,8 @@ if ($info['topicId'] && ($topic=Topic::lookup($info['topicId']))) {
   <input type="hidden" name="a" value="open">
   <table width="800" cellpadding="1" cellspacing="0" border="0">
     <tbody>
-    <tr>
+    <?php //-----------------Imaginea added class 'client-help-topic-class'------------- ?>
+    <tr class="client-help-topic-class">
         <td class="required"><?php echo __('Help Topic');?>:</td>
         <td>
             <select id="topicId" name="topicId" onchange="javascript:
