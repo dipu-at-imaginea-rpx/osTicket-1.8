@@ -861,6 +861,11 @@ class OsticketConfig extends Config {
             case 'kb':
                 return $this->updateKBSettings($vars, $errors);
                 break;
+            //--------------------Imaginea Starts-----------------
+            case 'wavemaker':
+                return $this->updateWaveMakerSettings($vars, $errors);
+                break;
+            //--------------------Imaginea Ends-----------------
             default:
                 $errors['err']=__('Unknown setting option. Get technical support.');
         }
@@ -1034,6 +1039,20 @@ class OsticketConfig extends Config {
     function getStaffLogoId() {
         return $this->getLogoId('staff');
     }
+    //------------------------Imaginea Starts------------------
+    function getPremiumUserLogoId() {
+        return $this->getLogoId('premium_user');
+    }
+    function getPremiumUserLogo() {
+        return $this->getLogo('premium_user');
+    }
+    function getPremiumSupportPhoneNumber() {
+        return $this->get('premium_contact_number');
+    }
+    function getTeamLogo() {
+        return $this->get('team_logo');
+    }
+    //------------------------Imaginea Ends--------------------
     function getStaffLogo() {
         return $this->getLogo('staff');
     }
@@ -1086,6 +1105,49 @@ class OsticketConfig extends Config {
                 ? $vars['selected-logo-scp'] : false),
            ));
     }
+
+    //------------------------------Imaginea Starts------------------------------
+
+    function updateWaveMakerSettings($vars, &$errors) {
+        global $ost;
+
+        $f=array();
+        $f['premium_contact_number']=array('type'=>'string',   'required'=>1, 'error'=>__('Premium User Contact number required'));
+
+        if ($_FILES['logo']) {
+            $error = false;
+            list($logo) = AttachmentFile::format($_FILES['logo']);
+            if (!$logo)
+                ; // Pass
+            elseif ($logo['error'])
+                $errors['logo'] = $logo['error'];
+            elseif (!($id = AttachmentFile::uploadLogo($logo, $error)))
+                $errors['logo'] = sprintf(__('Unable to upload logo image: %s'), $error);
+        }
+
+        if(!Validator::process($f, $vars, $errors) || $errors)
+            return false;
+
+        if (isset($vars['delete-logo']))
+            foreach ($vars['delete-logo'] as $id)
+                if (($vars['selected-logo'] != $id)
+                        && ($f = AttachmentFile::lookup($id)))
+                    $f->delete();
+
+        $team_logo = array();
+        foreach ($vars['team_ids'] as $key => $value) {
+            $team_logo[$value] = $vars['team_logo_ids'][$key];
+        }
+        // echo "<pre>"; print_r($team_logo);echo "</pre>";die();
+        return $this->updateAll(array(
+            'premium_contact_number' => $vars['premium_contact_number'],
+            'premium_user_logo_id' => (
+                (is_numeric($vars['selected-premium-user-logo']) && $vars['selected-premium-user-logo'])
+                ? $vars['selected-premium-user-logo'] : false),
+            'team_logo'=>json_encode($team_logo),
+           ));
+    }
+    //------------------------------Imaginea Ends------------------------------
 
     function updateAutoresponderSettings($vars, &$errors) {
 

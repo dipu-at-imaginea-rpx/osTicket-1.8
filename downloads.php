@@ -19,15 +19,26 @@ $nav->setActiveNav('downloads');
 require(CLIENTINC_DIR.'header.inc.php');
 ?>
 <div id="landing_page">
-    <h1>Welcome to the Support Portal Home</h1>
-    <p>
-        This page will display download pages of our support portal.
-    </p>
-    
-
-    
-
-   
+    <?php 
+        if($thisclient && is_object($thisclient) && $thisclient->isValid())
+        {
+            if('premium' === (string)$user->getVar('supportplan'))
+            {
+    ?>
+                <h1>Welcome to the Support Portal Home</h1>
+                <p>
+                    This page will display download pages of our support portal.
+                </p>
+    <?php
+            }
+        }else
+        {
+    ?>
+            You are not allowed to see this page, please go to <a href="<?php echo ROOT_PATH; ?>index.php"
+            title="<?php echo __('Support Center'); ?>">Support Center Home</a>
+    <?php
+        }
+    ?> 
 </div>
 
 </div>

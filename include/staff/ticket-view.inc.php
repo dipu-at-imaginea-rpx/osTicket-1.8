@@ -337,6 +337,35 @@ if($ticket->isOverdue())
         </td>
     </tr>
 </table>
+<?php 
+    //---------------------Imaginea Starts--------------------- 
+    if($ticket->getTeamId() > 0 )
+    {
+
+
+?>
+        <br>
+        <table class="ticket_info" cellspacing="0" cellpadding="0" width="940" border="0">
+                <tr>
+                    <td>
+                        <?php 
+                            
+                            $current_team_logos = json_decode($ost->getConfig()->getTeamLogo(), true);
+                            $team_logo = ($current_team_logos[$ticket->getTeamId()]) ? AttachmentFile::lookup($current_team_logos[$ticket->getTeamId()]) : null;
+                            if (null != $team_logo) {
+                        ?>
+                                <img src="<?php echo $team_logo->getDownloadUrl(); ?>" />
+                        <?php        
+                            }
+                        ?>
+                    </td>
+                </tr>
+        </table>
+<?php 
+    }
+    //---------------------Imaginea Endss--------------------- 
+
+?>
 <br>
 <table class="ticket_info" cellspacing="0" cellpadding="0" width="940" border="0">
 <?php

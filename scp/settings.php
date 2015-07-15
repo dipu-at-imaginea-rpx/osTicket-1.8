@@ -34,6 +34,9 @@ $settingOptions=array(
     'alerts' =>
         array(__('Alerts and Notices Settings'), 'settings.alerts'),
 );
+//------------------------Imaginea Starts -----------------------
+$settingOptions['wavemaker'] = array(__('WaveMaker Custom Settings'), 'settings.wavemaker');
+//------------------------Imaginea Ends -----------------------
 //Handle a POST.
 $target=($_REQUEST['t'] && $settingOptions[$_REQUEST['t']])?$_REQUEST['t']:'system';
 $page = false;

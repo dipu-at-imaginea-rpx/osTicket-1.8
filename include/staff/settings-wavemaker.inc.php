@@ -1,104 +1,95 @@
 <?php
 if(!defined('OSTADMININC') || !$thisstaff || !$thisstaff->isAdmin() || !$config) die('Access Denied');
-$pages = Page::getPages();
+
 ?>
-<h2><?php echo __('Company Profile'); ?></h2>
-<form action="settings.php?t=pages" method="post" id="save"
+<h2><?php echo __('WaveMaker Custom Settings'); ?></h2>
+<form action="settings.php?t=wavemaker" method="post" id="save"
     enctype="multipart/form-data">
 <?php csrf_token(); ?>
-<input type="hidden" name="t" value="pages" >
+<input type="hidden" name="t" value="wavemaker" >
 <table class="form_table settings_table" width="940" border="0" cellspacing="0" cellpadding="2">
-    <thead><tr>
-        <th colspan="2">
-            <h4><?php echo __('Basic Information'); ?></h4>
-        </th>
-    </tr></thead>
-    <tbody>
-    <?php
-        $form = $ost->company->getForm();
-        $form->addMissingFields();
-        $form->render();
-    ?>
-    </tbody>
     <thead>
         <tr>
             <th colspan="2">
-                <h4><?php echo __('Site Pages'); ?></h4>
-                <em><?php echo sprintf(__(
-                'To edit or add new pages go to %s Manage &gt; Site Pages %s'),
-                '<a href="pages.php">','</a>'); ?></em>
+                <h4><?php echo __('Premium Contact Details'); ?></h4>
             </th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td width="220" class="required"><?php echo __('Landing Page'); ?>:</td>
+            <td width="220" class="required"><?php echo __('Phone Number'); ?>:</td>
             <td>
                 <span>
-                <select name="landing_page_id">
-                    <option value="">&mdash; <?php echo __('Select Landing Page'); ?> &mdash;</option>
-                    <?php
-                    foreach($pages as $page) {
-                        if(strcasecmp($page->getType(), 'landing')) continue;
-                        echo sprintf('<option value="%d" %s>%s</option>',
-                                $page->getId(),
-                                ($config['landing_page_id']==$page->getId())?'selected="selected"':'',
-                                $page->getName());
-                    } ?>
-                </select>&nbsp;<font class="error">*&nbsp;<?php echo $errors['landing_page_id']; ?></font>
-                <i class="help-tip icon-question-sign" href="#landing_page"></i>
+                <input type="text" name="premium_contact_number" id="premium_contact_number" value="<?php echo isset($config['premium_contact_number'])?$config['premium_contact_number']:'';?>">&nbsp;<font class="error">*&nbsp;<?php echo $errors['premium_contact_number']; ?></font>
+                <i class="help-tip icon-question-sign" href="#premium_contact_number"></i>
                 </span>
             </td>
         </tr>
+    </tbody>
+</table>
+<?php
+ob_start();
+foreach (AttachmentFile::allLogos() as $logo) 
+{
+    echo "<option value='".$logo->getId()."'>".$logo->getName()."</option>";    
+}
+$option_logos = ob_get_clean();
+
+$current_team_logos = json_decode($ost->getConfig()->getTeamLogo(), true);
+
+?>
+<table class="form_table settings_table" width="940" border="0" cellspacing="0" cellpadding="2">
+    <thead>
         <tr>
-            <td width="220" class="required"><?php echo __('Offline Page'); ?>:</td>
-            <td>
-                <span>
-                <select name="offline_page_id">
-                    <option value="">&mdash; <?php echo __('Select Offline Page');
-                        ?> &mdash;</option>
-                    <?php
-                    foreach($pages as $page) {
-                        if(strcasecmp($page->getType(), 'offline')) continue;
-                        echo sprintf('<option value="%d" %s>%s</option>',
-                                $page->getId(),
-                                ($config['offline_page_id']==$page->getId())?'selected="selected"':'',
-                                $page->getName());
-                    } ?>
-                </select>&nbsp;<font class="error">*&nbsp;<?php echo $errors['offline_page_id']; ?></font>
-                <i class="help-tip icon-question-sign" href="#offline_page"></i>
-                </span>
-            </td>
+            <th colspan="2">
+                <h4><?php echo __('Team Icons'); ?></h4>
+            </th>
         </tr>
+    </thead>
+    <tbody>
+<?php
+    $sel_query  = "SELECT team_id, name FROM ost_team WHERE isenabled=1";
+    $res        = db_query($sel_query);
+    if(0 == db_num_rows($res))
+    {
+?>
         <tr>
-            <td width="220" class="required"><?php
-                echo __('Default Thank-You Page'); ?>:</td>
-            <td>
-                <span>
-                <select name="thank-you_page_id">
-                    <option value="">&mdash; <?php
-                        echo __('Select Thank-You Page'); ?> &mdash;</option>
-                    <?php
-                    foreach($pages as $page) {
-                        if(strcasecmp($page->getType(), 'thank-you')) continue;
-                        echo sprintf('<option value="%d" %s>%s</option>',
-                                $page->getId(),
-                                ($config['thank-you_page_id']==$page->getId())?'selected="selected"':'',
-                                $page->getName());
-                    } ?>
-                </select>&nbsp;<font class="error">*&nbsp;<?php echo $errors['thank-you_page_id']; ?></font>
-                <i class="help-tip icon-question-sign" href="#default_thank_you_page"></i>
-                </span>
+            <td colspan="2">
+                <?php echo __('No teams found'); ?>
             </td>
         </tr>
+<?php
+    }else
+    {
+        while ($row = db_fetch_array($res)) 
+        {
+?>
+            <tr>
+                <td width="220" class="required">
+                    <?php echo $row['name'];?>
+                    <input type="hidden" name="team_ids[]" value="<?php echo $row['team_id'];?>">
+                </td>
+                <td>
+                    <select name="team_logo_ids[]" id="team_logo_id_<?php echo $row['team_id'];?>" class="select-team-logo">
+                        <option value="0">Select Logo</option>
+                        <?php echo $option_logos;?>
+                    </select>
+                    <img src="" id="team_logo_<?php echo $row['team_id'];?>">
+                    <input type="hidden" name="selected_team_logo_ids[]" value="<?php echo isset($current_team_logos[$row['team_id']])?$current_team_logos[$row['team_id']]:0;?>" id="selected_team_logo_id_<?php echo $row['team_id'];?>">
+                </td>
+            </tr>   
+<?php       
+        } 
+    }
+?>
     </tbody>
 </table>
 <table class="form_table settings_table" width="940" border="0" cellspacing="0" cellpadding="2">
     <thead>
         <tr>
             <th colspan="2">
-                <h4><?php echo __('Logos'); ?>
-                    <i class="help-tip icon-question-sign" href="#logos"></i>
+                <h4><?php echo __('Premium User Logos'); ?>
+                    <i class="help-tip icon-question-sign" href="#premium_user_logos"></i>
                     </h4>
                 <em><?php echo __('System Default Logo'); ?></em>
             </th>
@@ -109,21 +100,15 @@ $pages = Page::getPages();
         <td colspan="2">
 <table style="width:100%">
     <thead><tr>
-        <th>Client</th>
-        <th>Staff</th>
+        <th>Premium Logo</th>
         <th>Logo</th>
     </tr></thead>
     <tbody>
         <tr>
             <td>
-                <input type="radio" name="selected-logo" value="0"
+                <input type="radio" name="selected-premium-user-logo" value="0"
                     style="margin-left: 1em"
                     <?php if (!$ost->getConfig()->getClientLogoId())
-                        echo 'checked="checked"'; ?>/>
-            </td><td>
-                <input type="radio" name="selected-logo-scp" value="0"
-                    style="margin-left: 1em"
-                    <?php if (!$ost->getConfig()->getStaffLogoId())
                         echo 'checked="checked"'; ?>/>
             </td><td>
                 <img src="<?php echo ROOT_PATH; ?>assets/default/images/logo.png"
@@ -138,28 +123,21 @@ $pages = Page::getPages();
                         vertical-align: middle"/>
             </td>
         </tr>
-        <tr><th colspan="3">
+        <tr><th colspan="2">
             <em><?php echo __('Use a custom logo'); ?>&nbsp;<i class="help-tip icon-question-sign" href="#upload_a_new_logo"></i></em>
         </th></tr>
     <?php
-    //----------------------Imaginea Starts------------------
     $current_premium_user_logo = $ost->getConfig()->getPremiumUserLogoId();
-    //----------------------Imaginea Ends------------------
     $current = $ost->getConfig()->getClientLogoId();
     $currentScp = $ost->getConfig()->getStaffLogoId();
+
     foreach (AttachmentFile::allLogos() as $logo) { ?>
         <tr>
             <td>
-                <input type="radio" name="selected-logo"
+                <input type="radio" name="selected-premium-user-logo"
                     style="margin-left: 1em" value="<?php
                     echo $logo->getId(); ?>" <?php
-                    if ($logo->getId() == $current)
-                        echo 'checked="checked"'; ?>/>
-            </td><td>
-                <input type="radio" name="selected-logo-scp"
-                    style="margin-left: 1em" value="<?php
-                    echo $logo->getId(); ?>" <?php
-                    if ($logo->getId() == $currentScp)
+                    if ($logo->getId() == $current_premium_user_logo)
                         echo 'checked="checked"'; ?>/>
             </td><td>
                 <img src="<?php echo $logo->getDownloadUrl(); ?>"
@@ -167,22 +145,12 @@ $pages = Page::getPages();
                     style="box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
                         margin: 0.5em; height: 5em;
                         vertical-align: middle;"/>
-                <?php if ($logo->getId() != $current && $logo->getId() != $currentScp) { ?>
-                <?php   
-                        //----------------------Imaginea Starts------------------
-                        if($logo->getId() != $current_premium_user_logo) { 
-                        //----------------------Imaginea Ends------------------
-
-                ?>
+                <?php echo $logo->getName(); ?>
+                <?php if ($logo->getId() != $current_premium_user_logo and $logo->getId() != $current and $logo->getId() != $currentScp) { ?>
                 <label>
                 <input type="checkbox" name="delete-logo[]" value="<?php
                     echo $logo->getId(); ?>"/> <?php echo __('Delete'); ?>
                 </label>
-                <?php   
-                        //----------------------Imaginea Starts------------------
-                        } 
-                        //----------------------Imaginea Ends------------------
-                ?>
                 <?php } ?>
             </td>
         </tr>
@@ -250,5 +218,13 @@ $(function() {
         }
         else return true;
     });
+});
+$( document ).ready(function() {
+    var selected_team_logo_ids = jQuery( "[name='selected_team_logo_ids[]']" );
+    for (var i = 0; i < selected_team_logo_ids.length; i++) {
+        // console.log(jQuery(selected_team_logo_ids[i]).attr('id').split('_').pop());
+        jQuery('#team_logo_id_'+jQuery(selected_team_logo_ids[i]).attr('id').split('_').pop()).val(jQuery(selected_team_logo_ids[i]).val());
+    };
+
 });
 </script>

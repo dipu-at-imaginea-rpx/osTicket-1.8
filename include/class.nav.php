@@ -238,6 +238,9 @@ class AdminNav extends StaffNav{
                     $subnav[]=array('desc'=>__('Knowledgebase'),'href'=>'settings.php?t=kb','iconclass'=>'kb-settings');
                     $subnav[]=array('desc'=>__('Autoresponder'),'href'=>'settings.php?t=autoresp','iconclass'=>'email-autoresponders');
                     $subnav[]=array('desc'=>__('Alerts and Notices'),'href'=>'settings.php?t=alerts','iconclass'=>'alert-settings');
+                    //------------------------Imaginea Starts -----------------------
+                    $subnav[]=array('desc'=>__('WaveMaker Settings'),'href'=>'settings.php?t=wavemaker','iconclass'=>'pages');
+                    //------------------------Imaginea Ends -----------------------
                     break;
                 case 'manage':
                     $subnav[]=array('desc'=>__('Help Topics'),'href'=>'helptopics.php','iconclass'=>'helpTopics');
@@ -339,6 +342,14 @@ class UserNav {
                                            'href'=>sprintf('tickets.php?id=%d',$user->getTicketId()),
                                            'title'=>__('View ticket status'));
                 }
+                //------------------Imaginea Starts-----------------
+                if('premium' === (string)$user->getVar('supportplan'))
+                {
+                    $navs['downloads']=array('desc'=>__('Downloads'),
+                                           'href'=>sprintf('downloads.php'),
+                                           'title'=>__('Downloads'));
+                }
+                //------------------Imaginea Ends-----------------
             } else {
                 $navs['status']=array('desc'=>__('Check Ticket Status'),'href'=>'view.php','title'=>'');
             }

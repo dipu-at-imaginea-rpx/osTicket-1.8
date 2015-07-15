@@ -102,6 +102,18 @@ $org = $user->getOrganization();
                         </span>
                     </td>
                 </tr>
+                <?php //-------------------Imaginea Starts ------------------------?>
+                <tr>
+                    <th><?php echo __('Support Plan'); ?>:</th>
+                    <td>
+                        <span id="user-<?php echo $user->getId(); ?>-plan">
+                        <?php
+                            echo ucfirst((string)$user->getVar('supportplan'));
+                        ?>
+                        </span>
+                    </td>
+                </tr>
+                <?php //-------------------Imaginea Starts ------------------------?>
             </table>
         </td>
         <td width="50%" style="vertical-align:top">

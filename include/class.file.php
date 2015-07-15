@@ -186,6 +186,41 @@ class AttachmentFile {
         $this->sendData();
         exit();
     }
+    //------------------ Imaginea Starts-----------------------
+    /**
+     *  This function is exactly same as above one but it won't set cache headers.
+     *
+     */
+    function no_cache_mode_display($scale=false) {
+        
+        if ($scale && extension_loaded('gd')) {
+            $image = imagecreatefromstring($this->getData());
+            $width = imagesx($image);
+            if ($scale <= $width) {
+                $height = imagesy($image);
+                if ($width > $height) {
+                    $heightp = $height * (int)$scale / $width;
+                    $widthp = $scale;
+                } else {
+                    $widthp = $width * (int)$scale / $height;
+                    $heightp = $scale;
+                }
+                $thumb = imagecreatetruecolor($widthp, $heightp);
+                $white = imagecolorallocate($thumb, 255,255,255);
+                imagefill($thumb, 0, 0, $white);
+                imagecopyresized($thumb, $image, 0, 0, 0, 0, $widthp,
+                    $heightp, $width, $height);
+                header('Content-Type: image/png');
+                imagepng($thumb);
+                return;
+            }
+        }
+        header('Content-Type: '.($this->getType()?$this->getType():'application/octet-stream'));
+        header('Content-Length: '.$this->getSize());
+        $this->sendData();
+        exit();
+    }
+    //------------------ Imaginea Ends-----------------------
 
     function getDownloadUrl($minage=false, $disposition=false, $handler=false) {
         // XXX: Drop this when AttachmentFile goes to ORM

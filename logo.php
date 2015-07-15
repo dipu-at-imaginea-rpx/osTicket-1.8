@@ -23,8 +23,26 @@ define('DISABLE_SESSION', true);
 
 require('client.inc.php');
 
-if (($logo = $ost->getConfig()->getClientLogo())) {
-    $logo->display();
+//------------------ Imaginea Starts-----------------------
+
+/**
+ *  Imaginea created new if condition(currently that is in first place).
+ *  Chenged previous if condition to elseif condition
+ */
+if($thisclient && is_object($thisclient) && $thisclient->isValid())
+{ 
+    if('premium' === (string)$thisclient->getVar('supportplan'))
+    {
+        $logo = $ost->getConfig()->getPremiumUserLogo();
+    }else
+    {   
+        $logo = $ost->getConfig()->getClientLogo();
+    }
+    $logo->no_cache_mode_display();
+}elseif (($logo = $ost->getConfig()->getClientLogo())) {
+    //$logo->display(); //This function call was default, Imaginea commented it for avoiding logo cache
+    $logo->no_cache_mode_display();//Calling function which won't set cache
+//------------------ Imaginea Ends----------------------- 
 } else {
     header('Location: '.ASSETS_PATH.'images/logo.png');
 }
