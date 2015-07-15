@@ -101,6 +101,35 @@ foreach (DynamicFormEntry::forTicket($ticket->getId()) as $idx=>$form) {
 <?php } ?>
 </tr>
 </table>
+<?php 
+    //---------------------Imaginea Starts--------------------- 
+    if($ticket->getTeamId() > 0 )
+    {
+
+
+?>
+        <br>
+        <table class="infoTable" cellspacing="0" cellpadding="0" width="100%" border="0">
+                <tr>
+                    <td>
+                        <?php 
+                            
+                            $current_team_logos = json_decode($ost->getConfig()->getTeamLogo(), true);
+                            $team_logo = ($current_team_logos[$ticket->getTeamId()]) ? AttachmentFile::lookup($current_team_logos[$ticket->getTeamId()]) : null;
+                            if (null != $team_logo) {
+                        ?>
+                                <img src="<?php echo $team_logo->getDownloadUrl(); ?>" />
+                        <?php        
+                            }
+                        ?>
+                    </td>
+                </tr>
+        </table>
+<?php 
+    }
+    //---------------------Imaginea Endss--------------------- 
+
+?>
 <br>
 <div class="subject"><?php echo __('Subject'); ?>: <strong><?php echo Format::htmlchars($ticket->getSubject()); ?></strong></div>
 <div id="ticketThread">

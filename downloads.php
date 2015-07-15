@@ -20,17 +20,15 @@ require(CLIENTINC_DIR.'header.inc.php');
 ?>
 <div id="landing_page">
     <?php 
-        if($thisclient && is_object($thisclient) && $thisclient->isValid())
+        if($thisclient && is_object($thisclient) && $thisclient->isValid() && 'premium' === (string)$thisclient->getVar('supportplan'))
         {
-            if('premium' === (string)$user->getVar('supportplan'))
-            {
     ?>
                 <h1>Welcome to the Support Portal Home</h1>
                 <p>
                     This page will display download pages of our support portal.
                 </p>
     <?php
-            }
+
         }else
         {
     ?>
