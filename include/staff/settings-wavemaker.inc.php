@@ -146,11 +146,11 @@ $current_team_logos = json_decode($ost->getConfig()->getTeamLogo(), true);
                         margin: 0.5em; height: 5em;
                         vertical-align: middle;"/>
                 <?php echo $logo->getName(); ?>
-                <?php if ($logo->getId() != $current_premium_user_logo and $logo->getId() != $current and $logo->getId() != $currentScp) { ?>
-                <label>
-                <input type="checkbox" name="delete-logo[]" value="<?php
-                    echo $logo->getId(); ?>"/> <?php echo __('Delete'); ?>
-                </label>
+                <?php if ($logo->getId() != $current_premium_user_logo and $logo->getId() != $current and $logo->getId() != $currentScp and !in_array($logo->getId(), $current_team_logos)) { ?>
+                    <label>
+                    <input type="checkbox" name="delete-logo[]" value="<?php
+                        echo $logo->getId(); ?>"/> <?php echo __('Delete'); ?>
+                    </label>
                 <?php } ?>
             </td>
         </tr>

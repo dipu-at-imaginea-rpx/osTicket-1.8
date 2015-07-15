@@ -144,6 +144,7 @@ $pages = Page::getPages();
     <?php
     //----------------------Imaginea Starts------------------
     $current_premium_user_logo = $ost->getConfig()->getPremiumUserLogoId();
+    $current_team_logos = json_decode($ost->getConfig()->getTeamLogo(), true);
     //----------------------Imaginea Ends------------------
     $current = $ost->getConfig()->getClientLogoId();
     $currentScp = $ost->getConfig()->getStaffLogoId();
@@ -170,7 +171,7 @@ $pages = Page::getPages();
                 <?php if ($logo->getId() != $current && $logo->getId() != $currentScp) { ?>
                 <?php   
                         //----------------------Imaginea Starts------------------
-                        if($logo->getId() != $current_premium_user_logo) { 
+                        if($logo->getId() != $current_premium_user_logo and !in_array($logo->getId(), $current_team_logos)) { 
                         //----------------------Imaginea Ends------------------
 
                 ?>
