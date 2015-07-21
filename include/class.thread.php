@@ -39,18 +39,14 @@ class Thread {
 
         $sql='SELECT ticket.ticket_id as id '
             .' ,count(DISTINCT attach.attach_id) as attachments '
-            .' ,count(DISTINCT message.id) as messages '
-            .' ,count(DISTINCT response.id) as responses '
-            .' ,count(DISTINCT note.id) as notes '
+            ." ,count(DISTINCT CASE WHEN thread.thread_type = 'M' THEN thread.id ELSE NULL END) as messages "
+            ." ,count(DISTINCT CASE WHEN thread.thread_type = 'R' THEN thread.id ELSE NULL END) as responses "
+            ." ,count(DISTINCT CASE WHEN thread.thread_type = 'N' THEN thread.id ELSE NULL END) as notes "
             .' FROM '.TICKET_TABLE.' ticket '
             .' LEFT JOIN '.TICKET_ATTACHMENT_TABLE.' attach ON ('
                 .'ticket.ticket_id=attach.ticket_id) '
-            .' LEFT JOIN '.TICKET_THREAD_TABLE.' message ON ('
-                ."ticket.ticket_id=message.ticket_id AND message.thread_type = 'M') "
-            .' LEFT JOIN '.TICKET_THREAD_TABLE.' response ON ('
-                ."ticket.ticket_id=response.ticket_id AND response.thread_type = 'R') "
-            .' LEFT JOIN '.TICKET_THREAD_TABLE.' note ON ( '
-                ."ticket.ticket_id=note.ticket_id AND note.thread_type = 'N') "
+            .' LEFT JOIN '.TICKET_THREAD_TABLE.' thread ON ('
+                .'ticket.ticket_id=thread.ticket_id) '
             .' WHERE ticket.ticket_id='.db_input($this->getTicketId())
             .' GROUP BY ticket.ticket_id';
 
@@ -1178,6 +1174,9 @@ class ThreadEntry {
                 .' WHERE `id`='.db_input($entry->getId());
             if (!db_query($sql) || !db_affected_rows())
                 return false;
+
+            // Set the $entry here for search indexing
+            $entry->ht['body'] = $body;
         }
 
         // Email message id
@@ -1532,9 +1531,14 @@ class HtmlThreadBody extends ThreadBody {
     }
 
     function getSearchable() {
-        // <br> -> \n
-        $body = preg_replace(array('`<br(\s*)?/?>`i', '`</div>`i'), "\n", $this->body);
-        $body = Format::htmldecode(Format::striptags($body));
+        // Replace tag chars with spaces (to ensure words are separated)
+        $body = Format::html($this->body, array('hook_tag' => function($el, $attributes=0) {
+            static $non_ws = array('wbr' => 1);
+            return (isset($non_ws[$el])) ? '' : ' ';
+        }));
+        // Collapse multiple white-spaces
+        $body = html_entity_decode($body, ENT_QUOTES);
+        $body = preg_replace('`\s+`u', ' ', $body);
         return Format::searchable($body);
     }
 

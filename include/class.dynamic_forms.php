@@ -999,6 +999,7 @@ class DynamicFormEntry extends VerySimpleModel {
             // entry-id if necessary
             $a->set('entry_id', $this->get('id'));
             try {
+                $field->setForm($this);
                 $val = $field->to_database($field->getClean());
             }
             catch (FieldUnchanged $e) {
@@ -1031,9 +1032,9 @@ class DynamicFormEntry extends VerySimpleModel {
     static function create($ht=false, $data=null) {
         $inst = parent::create($ht);
         $inst->set('created', new SqlFunction('NOW'));
-        $form = $inst->getForm();
         if ($data)
-            $form->setSource($data);
+            $inst->setSource($data);
+        $form = $inst->getForm();
         foreach ($form->getFields() as $f) {
             if (!$f->hasData()) continue;
             $a = DynamicFormEntryAnswer::create(

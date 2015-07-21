@@ -51,8 +51,10 @@ class DomElement {
 }
 
 class DomDocument {
+    function getElementsByTagName() {}
     function loadHTML() {}
     function loadXML() {}
+    function saveHTML() {}
 }
 
 class Exception {
@@ -104,6 +106,7 @@ class ZipArchive {
     function addFromString() {}
     function getFromIndex() {}
     function setCommentName() {}
+    function setExternalAttributesName() {}
 }
 
 class finfo {
