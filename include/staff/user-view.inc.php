@@ -108,7 +108,11 @@ $org = $user->getOrganization();
                     <td>
                         <span id="user-<?php echo $user->getId(); ?>-plan">
                         <?php
-                            echo ucfirst((string)$user->getVar('supportplan'));
+                            // echo ucfirst((string)$user->getVar('supportplan'));
+                            if ($org)
+                                echo ucfirst((string) $org->getVar('org_supportplan'));
+                            else
+                                echo "NIL";
                         ?>
                         </span>
                     </td>

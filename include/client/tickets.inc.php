@@ -152,9 +152,9 @@ $negorder=$order=='DESC'?'ASC':'DESC'; //Negate the sorting
             <th width="320">
                 <a href="tickets.php?sort=subj&order=<?php echo $negorder; ?><?php echo $qstr; ?>" title="Sort By Subject"><?php echo __('Subject');?></a>
             </th>
-            <th width="120">
+            <!-- <th width="120">
                 <a href="tickets.php?sort=dept&order=<?php echo $negorder; ?><?php echo $qstr; ?>" title="Sort By Department"><?php echo __('Department');?></a>
-            </th>
+            </th> -->
         </tr>
     </thead>
     <tbody>
@@ -186,7 +186,7 @@ $negorder=$order=='DESC'?'ASC':'DESC'; //Negate the sorting
                 <td>
                     <a href="tickets.php?id=<?php echo $row['ticket_id']; ?>"><?php echo $subject; ?></a>
                 </td>
-                <td>&nbsp;<?php echo Format::truncate($dept,30); ?></td>
+                <!-- <td>&nbsp;<?php //echo Format::truncate($dept,30); ?></td> -->
             </tr>
         <?php
         }

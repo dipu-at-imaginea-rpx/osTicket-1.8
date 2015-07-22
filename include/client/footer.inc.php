@@ -5,18 +5,22 @@
         //--------------------------Imaginea Starts-----------------------
         if($thisclient && is_object($thisclient) && $thisclient->isValid())
         {
-            if('premium' === (string)$thisclient->getVar('supportplan'))
+            $org = $thisclient->getOrganization();
+            if($org)
             {
-                if($cfg)
+                if('premium' === (string) $org->getVar('org_supportplan'))
                 {
-                    $preminum_support_number = $cfg->getPremiumSupportPhoneNumber();
-                    if('' != trim($preminum_support_number))
+                    if($cfg)
                     {
+                        $preminum_support_number = $cfg->getPremiumSupportPhoneNumber();
+                        if('' != trim($preminum_support_number))
+                        {
     ?>
-                        <div>
-                            Premium Support Number : <?php echo $preminum_support_number;?>
-                        </div>
+                            <div>
+                                Premium Support Number : <?php echo $preminum_support_number;?>
+                            </div>
     <?php
+                        }
                     }
                 }
             }

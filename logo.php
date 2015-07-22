@@ -31,13 +31,21 @@ require('client.inc.php');
  */
 if($thisclient && is_object($thisclient) && $thisclient->isValid())
 { 
-    if('premium' === (string)$thisclient->getVar('supportplan'))
+    $org = $thisclient->getOrganization();
+    if($org)
     {
-        $logo = $ost->getConfig()->getPremiumUserLogo();
+        if('premium' === (string) $org->getVar('org_supportplan'))
+        {
+            $logo = $ost->getConfig()->getPremiumUserLogo();
+        }else
+        {   
+            $logo = $ost->getConfig()->getClientLogo();
+        }
     }else
     {   
-        $logo = $ost->getConfig()->getClientLogo();
+            $logo = $ost->getConfig()->getClientLogo();
     }
+        
     $logo->no_cache_mode_display();
 }elseif (($logo = $ost->getConfig()->getClientLogo())) {
     //$logo->display(); //This function call was default, Imaginea commented it for avoiding logo cache
