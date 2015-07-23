@@ -343,11 +343,15 @@ class UserNav {
                                            'title'=>__('View ticket status'));
                 }
                 //------------------Imaginea Starts-----------------
-                if('premium' === (string)$user->getVar('supportplan'))
+                $org = $user->getOrganization();
+                if($org)
                 {
-                    $navs['downloads']=array('desc'=>__('Downloads'),
-                                           'href'=>sprintf('downloads.php'),
-                                           'title'=>__('Downloads'));
+                    if('premium' === (string) $org->getVar('org_supportplan'))
+                    {
+                        $navs['downloads']=array('desc'=>__('Downloads'),
+                                               'href'=>sprintf('downloads.php'),
+                                               'title'=>__('Downloads'));
+                    }
                 }
                 //------------------Imaginea Ends-----------------
             } else {

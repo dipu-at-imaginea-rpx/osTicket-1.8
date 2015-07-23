@@ -1,32 +1,6 @@
         </div>
     </div>
     <div id="footer">
-    <?php 
-        //--------------------------Imaginea Starts-----------------------
-        if($thisclient && is_object($thisclient) && $thisclient->isValid())
-        {
-            $org = $thisclient->getOrganization();
-            if($org)
-            {
-                if('premium' === (string) $org->getVar('org_supportplan'))
-                {
-                    if($cfg)
-                    {
-                        $preminum_support_number = $cfg->getPremiumSupportPhoneNumber();
-                        if('' != trim($preminum_support_number))
-                        {
-    ?>
-                            <div>
-                                Premium Support Number : <?php echo $preminum_support_number;?>
-                            </div>
-    <?php
-                        }
-                    }
-                }
-            }
-        }
-        //--------------------------Imaginea Ends-----------------------
-    ?>
         <p>Copyright &copy; <?php echo date('Y'); ?> <?php echo (string) $ost->company ?: 'osTicket.com'; ?> - All rights reserved.</p>
         <a id="poweredBy" href="http://osticket.com" target="_blank"><?php echo __('Helpdesk software - powered by osTicket'); ?></a>
     </div>
